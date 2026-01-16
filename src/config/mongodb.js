@@ -5,12 +5,12 @@
  */
 
 import { MongoClient, ServerApiVersion } from 'mongodb'
-
+import { env } from '~/config/environment'
 // Khởi tạo một đối tượng trelloDatabaseIsntance ban đầu là null (Ví chúng ta chưa connect)
 let trelloDatabaseIsntance = null
 
 // Khởi tạo một đối tượng mongoClientInstance để connect tới MongoDB
-const mongoClientInstance = new MongoClient(mongoDB_URI, {
+const mongoClientInstance = new MongoClient(env.MONGODB_URI, {
   /**
    * Lưu ý: Cái serverApi có từ phiên bản mongo 5.0.0 trở lên, có thể không dùng nó, còn nếu dùng nó là chúng ta chỉ định một cái Stable API version của MongoDB
    */
@@ -26,7 +26,7 @@ export const CONNECT_DB = async () => {
   // Gọi kết nối tới mongo Atlas với URI đã khai báo trong thân mongoClientInstance
   await mongoClientInstance.connect()
   // Kết nối thành công thì lấy ra databse theo tên và gán ngược nó lại vào biến trelloDatabaseIsntance ở trên của chúng ta.
-  trelloDatabaseIsntance = mongoClientInstance.db(database_name)
+  trelloDatabaseIsntance = mongoClientInstance.db(env.DATABASE_NAME)
 }
 
 
