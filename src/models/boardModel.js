@@ -40,16 +40,25 @@ const createNew = async (data) => {
 
 const findOneById = async (id) => {
   try {
-    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
-      _id: new ObjectId(String(id))
-    })
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(String(id)) })
     return result
   } catch (error) { throw new Error(error) }
 }
+
+// Query tổng hợp (aggragate) để lấy toàn bộ columns và Cards thuộc về Board
+const getDetails = async (id) => {
+  try {
+    // Hôm nay tạm thời giống hệt hàm findOneById - và sẽ update phần aggragate tiếp ở những video tới
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(String(id)) })
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
 
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
-  findOneById
+  findOneById,
+  getDetails
 }
