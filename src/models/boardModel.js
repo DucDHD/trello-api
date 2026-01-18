@@ -5,6 +5,7 @@
  */
 
 import Joi from 'joi'
+import { ObjectId } from 'mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
 // Define collection (Name & scheme)
@@ -24,9 +25,15 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
 
 })
 
+const validateBeforeCreate = async (data) => {
+  return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly:false })
+}
+
 const createNew = async (data) => {
   try {
-    const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
+    // Kiểm tra dữ liệu tại model trước khi insert dữ liệu vào DB
+    const validData = await validateBeforeCreate(data)
+    const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
     return createBoard
   } catch (error) { throw new Error(error) }
 }
@@ -34,7 +41,7 @@ const createNew = async (data) => {
 const findOneById = async (id) => {
   try {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
-      _id: id
+      _id: new ObjectId(String(id))
     })
     return result
   } catch (error) { throw new Error(error) }
