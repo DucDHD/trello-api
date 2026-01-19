@@ -38,13 +38,11 @@ const createNew = async (reqBody) => {
 const getDetails = async (boardId) => {
   try {
     const board = await boardModel.getDetails(boardId)
-    if (!board) {
+    if (board === null) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
-
     //B1: Deep Clone board ra một cái mới để xử lý, không ảnh hưởng tới board ban đầu, tùy mục đích về sau mà có cần clone hay không.
     const resBoard = cloneDeep(board)
-
     //B2: Đưa card về đúng column của nó
     resBoard.columns.forEach(column => {
       // Cách dùng 1: là convert ObjectId về String bằng hàm toString() của javascript
