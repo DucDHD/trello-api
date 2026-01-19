@@ -11,7 +11,7 @@ import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
 import { columnModel } from '~/models/columnModel'
 import { cardModel } from '~/models/cardModel'
- 
+
 // Define collection (Name & scheme)
 
 const BOARD_COLLECTION_NAME = 'boards'
@@ -73,7 +73,7 @@ const getDetails = async (id) => {
         as: 'cards'
       } }
     ]).toArray()
-    return result[0] || {}
+    return result[0] || null
   } catch (error) { throw new Error(error) }
 }
 
