@@ -29,16 +29,14 @@ const createNew = async (reqBody) => {
 
     // Trả kết quả về, trong service luôn luôn phải có return
     return getNewBoard
-  } catch (error) {
-    throw error
-  }
+  } catch (error) { throw error }
 }
 
 
 const getDetails = async (boardId) => {
   try {
     const board = await boardModel.getDetails(boardId)
-    if (board === null) {
+    if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
     //B1: Deep Clone board ra một cái mới để xử lý, không ảnh hưởng tới board ban đầu, tùy mục đích về sau mà có cần clone hay không.
