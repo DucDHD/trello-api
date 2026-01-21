@@ -100,6 +100,11 @@ const update = async (boardId, updateData) => {
         delete updateData[fieldName]
       }
     })
+
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map(_id => (new ObjectId(String(_id))))
+    }
+
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(String(boardId)) },
       { $set: updateData },
@@ -118,5 +123,4 @@ export const boardModel = {
   getDetails,
   pushColumnOrderIds,
   update
-  
 }
