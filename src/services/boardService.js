@@ -11,6 +11,7 @@ import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
 
+
 const createNew = async (reqBody) => {
   try {
     // Xử lý logic dữ liệu tùy đặc thù dự án
@@ -58,7 +59,22 @@ const getDetails = async (boardId) => {
   }
 }
 
+const update = async (boardId, reqBody) => {
+  try {
+    const updateData = {
+      ...reqBody,
+      updateAt: Date.now()
+    }
+    const updateBoard = await boardModel.update(boardId, updateData)
+    return updateBoard
+  } catch (error) {
+    throw error
+  }
+}
+
+
 export const boardService = {
   createNew,
-  getDetails
+  getDetails,
+  update
 }
