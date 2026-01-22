@@ -46,9 +46,9 @@ const createNew = async (data) => {
   } catch (error) { throw new Error(error) }
 }
 
-const findOneById = async (id) => {
+const findOneById = async (boardId) => {
   try {
-    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(String(id)) })
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(String(boardId)) })
     return result
   } catch (error) { throw new Error(error) }
 }
@@ -80,12 +80,27 @@ const getDetails = async (id) => {
   } catch (error) { throw new Error(error) }
 }
 
-// Nhiệm vụ của function này là push một cái giá trị columnId vào cuối mảng columnOrderIds
+// Đẩy một phần tử columnId vào cuối mảng columnOrderIds
+// Dùng $push trong mongodb ở trường hợp này để đẩy 1 phần tử vào cuối mảng
 const pushColumnOrderIds = async (column) => {
   try {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(String(column.boardId)) },
       { $push: { columnOrderIds: new ObjectId(String(column._id)) } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
+
+// Lấy một phần tử columnId ra khỏi mảng columnOrderIds
+// dùng $pull trong mongodb ở trường hợp này để lấy một phần tử ra khỏi mảng rối xóa nó đi.
+const pullColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(String(column.boardId)) },
+      { $pull: { columnOrderIds: new ObjectId(String(column._id)) } },
       { returnDocument: 'after' }
     )
     return result
@@ -122,5 +137,6 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
-  update
+  update,
+  pullColumnOrderIds
 }
