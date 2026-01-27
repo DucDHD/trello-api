@@ -8,23 +8,24 @@ import express from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { boardValidation } from '~/validations/boardValidation'
 import { boardController } from '~/controllers/boardController'
+import { authMiddleware } from '~/middlewares/authMiddleware'
 
 const Router = express.Router()
 
 Router.route('/')
-  .get( (req, res) => {
+  .get(authMiddleware.isAuthozired, (req, res) => {
     res.status(StatusCodes.OK).json({ message: 'GET: API GET list board' })
   } )
-  .post(boardValidation.createNew, boardController.createNew)
+  .post(authMiddleware.isAuthozired, boardValidation.createNew, boardController.createNew)
 
 Router.route('/:id')
-  .get(boardController.getDetails)
-  .put(boardValidation.update, boardController.update)
+  .get(authMiddleware.isAuthozired, boardController.getDetails)
+  .put(authMiddleware.isAuthozired, boardValidation.update, boardController.update)
 
 
 // API hỗ trợ việc di chuyển card giữa các column khác nhau trong một board
 Router.route('/supports/moving_card')
-  .put(boardValidation.moveCardToDifferentColumn, boardController.moveCardToDifferentColumn)
+  .put(authMiddleware.isAuthozired, boardValidation.moveCardToDifferentColumn, boardController.moveCardToDifferentColumn)
 
 
 export const boardRoute = Router
