@@ -12,8 +12,9 @@ const createNew = async (req, res, next) => {
     // console.log('req.body', req.body)
     // console.log('req.query', req.query)
     // console.log('req.params', req.params)
-
-    const createBoard = await boardService.createNew(req.body)
+    const userId = req.jwtDecoded._id
+    const createBoard = await boardService.createNew(userId, req.body)
+    console.log('Controler', createBoard)
     res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) { next(error) }
 }
@@ -21,8 +22,9 @@ const createNew = async (req, res, next) => {
 const getDetails = async (req, res, next) => {
   try {
     // console.log('req.params', req.params)
+    const userId = req.jwtDecoded._id
     const boardId = req.params.id
-    const board = await boardService.getDetails(boardId)
+    const board = await boardService.getDetails(userId, boardId)
 
     // Có kết quả thì trả về phía client
     res.status(StatusCodes.OK).json(board)

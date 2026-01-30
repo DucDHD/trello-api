@@ -45,11 +45,16 @@ const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly:false })
 }
 
-const createNew = async (data) => {
+const createNew = async (userId, data) => {
   try {
     // Kiểm tra dữ liệu tại model trước khi insert dữ liệu vào DB
     const validData = await validateBeforeCreate(data)
-    const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
+    const newBoardtoAdd = {
+      ...validData,
+      ownerIds: [new ObjectId(String(userId))]
+    }
+    const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardtoAdd)
+    console.log('Model ~ createNew ~ createBoard:', createBoard)
     return createBoard
   } catch (error) { throw new Error(error) }
 }
@@ -62,15 +67,20 @@ const findOneById = async (boardId) => {
 }
 
 // Query tổng hợp (aggragate) để lấy toàn bộ columns và Cards thuộc về Board
-const getDetails = async (id) => {
+const getDetails = async (userId, boardId) => {
   try {
+    const querCondition = [
+      { _id: new ObjectId(String(boardId)) },
+      { _destroy: false },
+      { $or: [
+        { ownerIds: { $all: [new ObjectId(String(userId))] } },
+        { memberIds: { $all: [new ObjectId(String(userId))] } }
+      ] }
+    ]
     // Hôm nay tạm thời giống hệt hàm findOneById - và sẽ update phần aggragate tiếp ở những video tới
     //const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(String(id)) })
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-      { $match: {
-        _id: new ObjectId(String(id)),
-        _destroy: false
-      } },
+      { $match: { $and: querCondition } },
       { $lookup : {
         from: columnModel.COLUMN_COLLECTION_NAME,
         localField: '_id',
