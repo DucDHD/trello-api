@@ -14,4 +14,7 @@ const Router = express.Router()
 Router.route('/')
   .post(authMiddleware.isAuthozired, cardValidation.createNew, cardController.createNew)
 
+Router.route('/:id')
+  .put(authMiddleware.isAuthozired, cardValidation.update, cardController.update)
+
 export const cardRoute = Router
