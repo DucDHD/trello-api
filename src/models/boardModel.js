@@ -55,7 +55,6 @@ const createNew = async (userId, data) => {
       ownerIds: [new ObjectId(String(userId))]
     }
     const createBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardtoAdd)
-    console.log('Model ~ createNew ~ createBoard:', createBoard)
     return createBoard
   } catch (error) { throw new Error(error) }
 }
