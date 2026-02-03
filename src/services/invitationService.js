@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import { invitationModel } from '~/models/invitationModel'
 import { pickUser } from '~/utils/formatters'
 import { userModel } from '~/models/userModel'
-import {INVITATION_TYPES, BOARD_INVITATION_STATUS } from '~/utils/constants'
+import { INVITATION_TYPES, BOARD_INVITATION_STATUS } from '~/utils/constants'
 
 const createNewBoardInvitation = async ( reqBody, inviterId ) => {
   try {
@@ -48,6 +48,30 @@ const createNewBoardInvitation = async ( reqBody, inviterId ) => {
   } catch (error) { throw error }
 }
 
+const getInvitations = async(userId) => {
+  try {
+    const getInvitations = await invitationModel.findbyUser(userId)
+    // Vì các dữ liệu inviter, invitee và board là đang ở giá trị 1 phần tử nến lấy ra được nên chúng ta biến đổi nó về Json Object trước khi trả về FE
+    // const resInvitations = getInvitations.map( i => {
+    //   return {
+    //     ...i,
+    //     inviter: i.inviter[0] || {},
+    //     invitee: i.invitee[0] || {},
+    //     board: i.board[0] || {}
+    //   }
+    // })
+    const resInvitations = getInvitations.map( i => ({
+      ...i,
+      inviter: i.inviter[0] || {},
+      invitee: i.invitee[0] || {},
+      board: i.board[0] || {}
+    }))
+
+    return resInvitations
+  } catch (error) { throw error }
+}
+
 export const invitationService = {
-  createNewBoardInvitation
+  createNewBoardInvitation,
+  getInvitations
 }
