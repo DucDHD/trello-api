@@ -16,4 +16,8 @@ Router.route('/board')
 Router.route('/')
   .get( authMiddleware.isAuthozired, invitationController.getInvitations)
 
+Router.route('/board/:invitationId')
+  .put( authMiddleware.isAuthozired, invitationController.updateBoardInvitation)
+
+
 export const invitationRoute = Router

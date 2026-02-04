@@ -15,6 +15,10 @@ import { APIs_V1 } from '~/routes/v1'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import cookieParser from 'cookie-parser'
 
+import socketIo from 'socket.io'
+import http from 'http'
+import { inviteUserToBoardSocket } from '~/sockets/inviteUserToBoardSocket'
+
 const START_SERVER = () => {
   const app = express()
 
@@ -38,7 +42,17 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập chung
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
+  // Tạo một cái server mới bọc thằng app của express để làm real-time với socket.io
+  const server = http.createServer(app)
+
+  // Khởi tạo biến Io vơi server với cors
+  const io = socketIo(server, { cors: corspOtions })
+  io.on('connection', (socket) => {
+    inviteUserToBoardSocket(socket)
+  })
+
+  // Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
+  server.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3. Hi ${env.AUTHOR} Back-End Server is running successfully at Host: http://${ env.APP_HOST }:${ env.APP_PORT }/`)
   })
 
