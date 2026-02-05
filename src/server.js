@@ -49,6 +49,7 @@ const START_SERVER = () => {
   const io = socketIo(server, { cors: corspOtions })
   io.on('connection', (socket) => {
     inviteUserToBoardSocket(socket)
+    
   })
 
   // Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
